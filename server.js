@@ -2,55 +2,55 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const dns = require('dns');
-const User= require("./model/User");
+const userRouter = require('./routes/userRouter');
+const jwt = require("jsonwebtoken");
+const connectDb = require("./config/db");
+const bcrypt = require("bcrypt");
+require('dotenv').config()
 
-
-const bcrypt = require("bcrypt")
 
 dns.setServers(['8.8.8.8', '1.1.1.1']);
-app.get("/", (req, res) => {
-    res.send("hi");
-});
 
 app.use(express.json());
-
-
-mongoose.connect("mongodb+srv://navyasowdala_db_user:2004@cluster0.ovyshha.mongodb.net/?appName=Cluster0")
-.then(() => {
-    console.log("MongoDB connected");
-})
-.catch((err) => {
-    console.log(err);
-});
+app.use(userRouter);
 
 
 
-app.post("/students/add",async(req,res)=>{
+const db = require("./config/db");
+
+connectDb();
+
+const verifytoken =(req,res,next)=>{
+
+    const token = req.headers.authorization;
+    if(!token){
+        return res.send("token missing");
+
+    }
+
     try{
-
-        const user = new User(req.body);
-
-        await user.save();
-
-        res.send(user);
-    
+        jwt.verify(token,"secretkey");
+       next()
     }catch(err){
-        res.send(err)
+
+        console.log("invalid token")
+
     }
 }
-)
+
+
 
 
 
 app.get("/students", async(req, res) => {
     try{
 
-        const user = await user.find();
+        const user = await User.find();
 
-        res.send("user");
+        res.send(user);
 
     }catch(err){
-        console.groupCollapsed(err)
+        console.groupCollapsed(err);
     }
    
 });
@@ -87,20 +87,8 @@ app.put("/students/update/:id",async(req,res)=>{
 
 })
 
-app.delete("/students/:id",async(req,res)=>{
-
-    try{
-   
-
-        const user = await User.findByIdAndDelete(req.params.id);
-       res.send("user deleted");
 
 
-
-    }catch(err){
-    console.log(err)
-}
-})
 app.post("/register", async(req, res)=>{
     try{
         const {name,email,password} =req.body;
@@ -127,6 +115,36 @@ app.post("/register", async(req, res)=>{
     }catch(err){
         console.log(err);
 
+    }
+})
+app.post("/login", async(req,res)=>{
+    try{
+
+        const {email,password} = req.body;
+
+        const user = await User.findOne({email});
+        if (!user){
+            return res.end("user not found");
+        }
+
+        const ismatch = await bcrypt.compare(password,user.password);
+
+        if(!ismatch){
+            return res.end("invalid pswrd");
+        }
+
+        const token = jwt.sign(
+            {id:user._id},
+            "secretkey",
+            {expiresIn:"1h"}
+        )
+        res.send({
+            message:"login successfull",
+            token
+        })
+
+    }catch(err){
+     console.log(err);
     }
 })
 
