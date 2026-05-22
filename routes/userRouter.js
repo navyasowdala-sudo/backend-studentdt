@@ -1,12 +1,11 @@
-const express = require('express');
+const express = require("express");
+
 const router = express.Router();
-const {Addstudent,deletestudent} = require('../controller/userController');
 
+const {
+    getProducts
+} = require("../controller/userController");
 
-
-router.post("/student/add", Addstudent);
-
-router.delete("/delete/:id",deletestudent);
+router.get("/products", getProducts);
 
 module.exports = router;
-

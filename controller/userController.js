@@ -1,35 +1,28 @@
-const User = require('../model/User');
+const axios = require("axios");
 
-const Addstudent = async(req,res)=>{
-    try{
+// Get Fake Store Products
+const getProducts = async (req, res) => {
 
-        const user = new User(req.body);
+    try {
 
-        await user.save();
+        // Fetch products from Fake Store API
+        const response = await axios.get(
+            "https://fakestoreapi.com/products"
+        );
 
-        res.send(user);
-    
-    }catch(err){
-        res.send(err)
-        console.log(err);
+        // Send products
+        res.json(response.data);
+
+    } catch (error) {
+
+        res.json({
+            error: error.message
+        });
+
     }
+
 };
 
-const deletestudent = async(req,res)=>{
-
-    try{
-   
-
-        const user = await User.findByIdAndDelete(req.params.id);
-       res.send("user deleted");
-
-
-
-    }catch(err){
-    console.log(err)
-    res.send(err);
-}
+module.exports = {
+    getProducts
 };
-
-
-module.exports = {Addstudent, deletestudent};
