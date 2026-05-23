@@ -9,8 +9,7 @@ require("dotenv").config();
 
 const connectDb = require("./config/db");
 
-const userRouter = require("./routes/userRouter");
-
+const productRouter = require("./routes/productRouter");
 const app = express();
 
 app.use(cors());
@@ -21,7 +20,7 @@ app.use(express.json());
 connectDb();
 
 // Routes
-app.use("/", userRouter);
+app.use("/", productRouter);
 
 // Home Route
 app.get("/checking", (req, res) => {
