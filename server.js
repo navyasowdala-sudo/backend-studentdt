@@ -1,5 +1,5 @@
 const express = require("express");
-const cors = require("cors");
+
 
 const dns = require("dns");
 
@@ -12,7 +12,7 @@ const connectDb = require("./config/db");
 const productRouter = require("./routes/productRouter");
 const app = express();
 
-app.use(cors());
+
 
 app.use(express.json());
 
