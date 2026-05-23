@@ -24,7 +24,7 @@ connectDb();
 app.use("/", userRouter);
 
 // Home Route
-app.get("/", (req, res) => {
+app.get("/checking", (req, res) => {
     res.send("<h1>Backend Server Running</h1>");
 });
 
