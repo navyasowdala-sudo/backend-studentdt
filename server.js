@@ -1,6 +1,6 @@
 const express = require("express");
 
-
+const cors = require("cors");
 const dns = require("dns");
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
@@ -11,6 +11,12 @@ const connectDb = require("./config/db");
 
 const productRouter = require("./routes/productRouter");
 const app = express();
+app.use(
+    cors({
+        origin: "http://localhost:5173"
+
+    })
+);
 
 
 
